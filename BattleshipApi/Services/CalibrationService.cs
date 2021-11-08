@@ -180,31 +180,36 @@ namespace Battleship.Api.Services
             return result;
         }
 
-        #endregion PUBLIC MEMBERS
-
-
         /// <summary>
-        /// Tests the requested <paramref name="turret"/> and returns the result.
+        /// Returns the configured calibration tests.
         /// </summary>
-        /// <param name="turret"><see cref="Turret"/> to test</param>
-        /// <returns><see cref="CalibrationTestResult"/></returns>
-        private static CalibrationTestResult DoTest(
-            Turret turret
-            )
+        /// <returns><see cref="CalibrationSettings"/></returns>
+        public async Task<CalibrationSettings> GetCalibrationAsync()
         {
+            _logger.LogTrace($"{nameof(CalibrationService)}.{nameof(GetCalibrationAsync)}=>");
 
-            if (turret is null)
-                throw new ArgumentNullException(nameof(turret));
+            CalibrationSettings  result = default;
 
-            var result = new CalibrationTestResult()
+            try
             {
-                TurretId = turret.Id,
-                Rotated = turret.RotationEndAngle - turret.RotationStartAngle,
-                TimesTested = 1
-            };
+                result = await _cacheRepo.GetAsync<CalibrationSettings>(
+                    _calibrationSettingsKey
+                    );
+            }
+            catch (Exception ex)
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+            finally
+            {
+                _logger.LogTrace($"{nameof(CalibrationService)}.{nameof(GetCalibrationAsync)}<=");
+            }
 
             return result;
         }
+
+        #endregion PUBLIC MEMBERS
+
 
         #region ==================== WORKER FUNCTIONS ====================
 
@@ -281,6 +286,29 @@ namespace Battleship.Api.Services
                     throw new KeyNotFoundException($"The turrent Id {id} in {nameof(sequenceTurretIds)} does not exist in the {nameof(turrets)}!");
 
             return true;
+        }
+
+        /// <summary>
+        /// Tests the requested <paramref name="turret"/> and returns the result.
+        /// </summary>
+        /// <param name="turret"><see cref="Turret"/> to test</param>
+        /// <returns><see cref="CalibrationTestResult"/></returns>
+        private static CalibrationTestResult DoTest(
+            Turret turret
+            )
+        {
+
+            if (turret is null)
+                throw new ArgumentNullException(nameof(turret));
+
+            var result = new CalibrationTestResult()
+            {
+                TurretId = turret.Id,
+                Rotated = turret.RotationEndAngle - turret.RotationStartAngle,
+                TimesTested = 1
+            };
+
+            return result;
         }
 
         #endregion WORKER FUNCTIONS

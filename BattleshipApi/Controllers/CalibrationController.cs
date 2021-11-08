@@ -117,6 +117,34 @@ namespace Battleship.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Gets the configured calibration tests.
+        /// </summary>
+        /// <returns><see cref="CalibrationSettings"/></returns>
+        [HttpGet()]
+        [Produces("application/json", Type = typeof(IEnumerable<CalibrationTestResult>))]
+        public async Task<ActionResult<CalibrationSettings>> GetCalibrationAsync()
+        {
+            _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetCalibrationAsync)}=>");
+
+            CalibrationSettings result = default;
+
+            try
+            {
+                result = await _calibrationSvc.GetCalibrationAsync();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+            finally
+            {
+                _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetCalibrationAsync)}<=");
+            }
+
+            return Ok(result);
+        }
+
         #endregion PUBLIC MEMBERS
 
     }
