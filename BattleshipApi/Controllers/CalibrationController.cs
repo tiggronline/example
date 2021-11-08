@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Battleship.Api.Controllers
@@ -61,7 +62,7 @@ namespace Battleship.Api.Controllers
         /// <returns>Boolean</returns>
         [HttpPut("Calibration/Settings")]
         public async Task<ActionResult<bool>> SaveCalibrationSettingsAsync(
-            [FromBody] CalibrationSettings settings
+            [Required, FromBody] CalibrationSettings settings
             )
         {
             _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(SaveCalibrationSettingsAsync)}=>");

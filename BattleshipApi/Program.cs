@@ -7,11 +7,15 @@ using System.Diagnostics;
 
 namespace Battleship.Api
 {
+
+    /// <summary>
+    /// Entry class for the application.
+    /// </summary>
     public class Program
     {
 
         /// <summary>
-        /// Main entry point for the applicatioin.
+        /// Entry point for the application.
         /// </summary>
         /// <param name="args">String array of command line arguments pass when starting the app</param>
         public static int Main(
@@ -44,6 +48,10 @@ namespace Battleship.Api
 
                 return 1;
             }
+            finally
+            {
+                Serilog.Log.CloseAndFlush();
+            }
         }
 
 
@@ -52,7 +60,7 @@ namespace Battleship.Api
         /// </summary>
         /// <param name="args">String array of command line arguments pass when starting the app</param>
         /// <returns>IHostBuilder</returns>
-        public static IHostBuilder CreateHostBuilder(
+        private static IHostBuilder CreateHostBuilder(
             string[] args
             )
             => Host
@@ -66,8 +74,7 @@ namespace Battleship.Api
                     (context, services, configuration) =>
                         configuration
                             .ReadFrom.Configuration(context.Configuration)
-                            .ReadFrom.Services(services)
-                            .Enrich.FromLogContext(),
+                            .ReadFrom.Services(services),
                     writeToProviders: true
                     )
                 .ConfigureWebHostDefaults(

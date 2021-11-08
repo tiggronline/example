@@ -65,6 +65,7 @@ namespace Battleship.Api
                     .Bind(_configuration.GetSection(OptionsForTurrets.SectionPath))
                         .ValidateDataAnnotations();
 
+
             services.AddSqliteCache(
                 options =>
                 {
@@ -73,11 +74,12 @@ namespace Battleship.Api
                 }
                 );
 
+
             services
                 .AddControllers()
                 .AddNewtonsoftJson(
                     options =>
-                    { //Configure JSON
+                    {
                         options.SerializerSettings.ContractResolver = new DefaultContractResolver()
                         {
                             NamingStrategy = new CamelCaseNamingStrategy()
@@ -90,7 +92,7 @@ namespace Battleship.Api
 #else
                         options.SerializerSettings.Formatting = Formatting.None;
 #endif
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;  
+                        options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     }
                     );
 
@@ -168,38 +170,34 @@ namespace Battleship.Api
             // Must be called before handlers such as MVC (will not time or log components that appear before it in the pipeline).
             Program.WriteToDebugAndConsole($"Configuring SerilogRequestLogging...");
 
-            app.UseSerilogRequestLogging();
+            app.UseSerilogRequestLogging(); //Start the logging before anything else so as much as possible gts logged
 
 
             if (env.IsDevelopment())
             {
                 Program.WriteToDebugAndConsole($"Configuring Dev Environment (exceptions & Swagger)...");
 
-                app.UseDeveloperExceptionPage();
-
-                app.UseSwagger();
-                app.UseSwaggerUI(
-                    c => c.SwaggerEndpoint(
-                            "/swagger/v1/swagger.json",
-                            $"{AppInfo.Product} v{AppInfo.Version.ToString(2)}"
-                            )
-                    );
+                app.UseDeveloperExceptionPage()
+                    .UseSwagger()
+                    .UseSwaggerUI(
+                        c => c.SwaggerEndpoint(
+                                "/swagger/v1/swagger.json",
+                                $"{AppInfo.Product} v{AppInfo.Version.ToString(2)}"
+                                )
+                        );
             }
 
-            app.UseHttpsRedirection();
+            Program.WriteToDebugAndConsole($"Configuring pipeline...");
 
-            app.UseRouting();
+            app.UseHttpsRedirection()
+                .UseRouting()
+                .UseEndpoints(endpoints =>
+                    endpoints.MapControllers() // Handle requests matching MVC Endpoints
+                );
 
-            //app.UseAuthorization();
+            //Use custom Exception Handler for structured error responses
+            Program.WriteToDebugAndConsole($"Configuring error handling...");
 
-            // Handle requests matching MVC Endpoints
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-
-            //Use custom Exception Handler for structured ApiError responses
             app.UseHttpInterceptorMiddleware();
 
         }
