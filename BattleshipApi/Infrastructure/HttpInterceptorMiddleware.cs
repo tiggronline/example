@@ -125,10 +125,9 @@ namespace Battleship.API.Infrastructure
                     _ => HttpStatusCode.InternalServerError
                 };
 
-                //TODO: Review Exceptions that can be raised
                 var message = statusCode switch
                 {
-                    HttpStatusCode.BadRequest => $"Bad request {usefulException.Message}!",                                 // 400
+                    HttpStatusCode.BadRequest => $"Bad request - {usefulException.Message}!",                               // 400
                     HttpStatusCode.Forbidden => "You do not have access to that feature!",                                  // 403
                     HttpStatusCode.NotFound => "Not found - the requested item may have been moved, renamed or deleted!",   // 404
                     HttpStatusCode.RequestTimeout => "The request was cancelled - please try again",                        // 408
@@ -136,10 +135,10 @@ namespace Battleship.API.Infrastructure
                         usefulException.InnerException?.Message is null ? 
                             $"Locked for use by someone else!" :
                             usefulException.InnerException?.Message, //Return actual error
-                    HttpStatusCode.UnsupportedMediaType => $"Unsupported media type {usefulException.Message}!",            // 415
+                    HttpStatusCode.UnsupportedMediaType => $"Unsupported media type - {usefulException.Message}!",          // 415
                     HttpStatusCode.GatewayTimeout => $"The request timed out - please try again later",                     // 504
-                    HttpStatusCode.NotImplemented => $"That feature has not been implemented {usefulException.Message}!",   // 501
-                    HttpStatusCode.InternalServerError => "Something unexpected went wrong!",                               // 500
+                    HttpStatusCode.NotImplemented => $"That feature has not been implemented - {usefulException.Message}!", // 501
+                    HttpStatusCode.InternalServerError => "Something really unexpected just occurred!",                     // 500
                     _ => exception.Message
                 };
 

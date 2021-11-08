@@ -60,7 +60,8 @@ namespace Battleship.Api.Controllers
         /// </summary>
         /// <param name="settings" example="{'abc':'def'}"><see cref="CalibrationSettings"/></param>
         /// <returns>Boolean</returns>
-        [HttpPut("Calibration/Settings")]
+        [HttpPut("Settings")]
+        [Produces("application/json", Type = typeof(bool))]
         public async Task<ActionResult<bool>> SaveCalibrationSettingsAsync(
             [Required, FromBody] CalibrationSettings settings
             )
@@ -84,7 +85,8 @@ namespace Battleship.Api.Controllers
         /// Runs the configured calibration tests.
         /// </summary>
         /// <returns>IEnumerable of <see cref="CalibrationTestResult"/>s</returns>
-        [HttpPut("Calibration/Run")]
+        [HttpPut("Run")]
+        [Produces("application/json", Type = typeof(IEnumerable<CalibrationTestResult>))]
         public async Task<ActionResult<IEnumerable<CalibrationTestResult>>> RunCalibrationAsync()
         {
             _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(RunCalibrationAsync)}=>");

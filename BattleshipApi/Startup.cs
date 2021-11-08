@@ -177,7 +177,7 @@ namespace Battleship.Api
             {
                 Program.WriteToDebugAndConsole($"Configuring Dev Environment (exceptions & Swagger)...");
 
-                app.UseDeveloperExceptionPage()
+                app //.UseDeveloperExceptionPage()
                     .UseSwagger()
                     .UseSwaggerUI(
                         c => c.SwaggerEndpoint(
@@ -187,6 +187,13 @@ namespace Battleship.Api
                         );
             }
 
+
+            //Use custom Exception Handler for structured error responses
+            Program.WriteToDebugAndConsole($"Configuring error handling...");
+
+            app.UseHttpInterceptorMiddleware();
+
+
             Program.WriteToDebugAndConsole($"Configuring pipeline...");
 
             app.UseHttpsRedirection()
@@ -194,11 +201,6 @@ namespace Battleship.Api
                 .UseEndpoints(endpoints =>
                     endpoints.MapControllers() // Handle requests matching MVC Endpoints
                 );
-
-            //Use custom Exception Handler for structured error responses
-            Program.WriteToDebugAndConsole($"Configuring error handling...");
-
-            app.UseHttpInterceptorMiddleware();
 
         }
 
