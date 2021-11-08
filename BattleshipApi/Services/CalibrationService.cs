@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
@@ -134,12 +135,38 @@ namespace Battleship.Api.Services
 
             try
             {
-                result = await Task.FromResult(
-                    Array.Empty<CalibrationTestResult>()
+                var settings = await _cacheRepo.GetAsync<CalibrationSettings>(
+                    _calibrationSettingsKey
                     );
 
-                throw new NotImplementedException(); //TODO: Implement SaveSettingsAsync
+                if (settings is null)
+                    throw new InvalidOperationException("No calibration settings have been configured!");
 
+
+                Dictionary<int, CalibrationTestResult> testResults = new();
+
+                var turrets = settings.Turrets.ToDictionary(
+                    t => t.Id,
+                    t => t
+                    );
+
+                foreach (var turretId in settings.Sequence)
+                {
+                    _logger.LogDebug($"Testing calibration for turret {turretId}...");
+
+                    var testResult = await DoTest( // TODO: Handle test failures and feed this back to the user
+                        turrets[turretId]
+                        );
+
+                    if (testResults.TryGetValue(turretId, out var existingTestResult))
+                        testResults[turretId] = testResult + existingTestResult;
+                    else
+                        testResults.Add(turretId, testResult);
+
+                    _logger.LogDebug($"Testing calibration for turret {turretId} completed successfully");
+                }
+
+                result = testResults.Values; //TODO: We could apply some kind of ordering here.
             }
             catch (Exception ex)
             {
@@ -155,6 +182,29 @@ namespace Battleship.Api.Services
 
         #endregion PUBLIC MEMBERS
 
+
+        /// <summary>
+        /// Tests the requested <paramref name="turret"/> and returns the result.
+        /// </summary>
+        /// <param name="turret"><see cref="Turret"/> to test</param>
+        /// <returns><see cref="CalibrationTestResult"/></returns>
+        private async Task<CalibrationTestResult> DoTest(
+            [Required] Turret turret
+            )
+        {
+
+            if (turret is null)
+                throw new ArgumentNullException(nameof(turret));
+
+            var result = new CalibrationTestResult()
+            {
+                TurretId = turret.Id,
+                Rotated = turret.RotationEndAngle - turret.RotationStartAngle,
+                TimesTested = 1
+            };
+
+            return result;
+        }
 
         #region ==================== WORKER FUNCTIONS ====================
 

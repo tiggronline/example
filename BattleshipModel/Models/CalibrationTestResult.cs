@@ -1,4 +1,6 @@
-﻿namespace Battleship.Model.Models
+﻿using System;
+
+namespace Battleship.Model.Models
 {
 
     /// <summary>
@@ -25,6 +27,33 @@
         /// <value>Integer degrees</value>
         public int Rotated { get; set; }
 
+
+        /// <summary>
+        /// Adds the <paramref name="ctr1"/> to the <paramref name="ctr2"/> and returns the result.
+        /// </summary>
+        /// <param name="ctr1"><see cref="CalibrationTestResult"/></param>
+        /// <param name="ctr2"><see cref="CalibrationTestResult"/></param>
+        /// <returns><see cref="CalibrationTestResult"/></returns>
+        public static CalibrationTestResult operator +(
+            CalibrationTestResult ctr1, 
+            CalibrationTestResult ctr2
+            )
+        {
+            if (ctr1 is null)
+                throw new ArgumentNullException(nameof(ctr1));
+
+            if (ctr2 is null)
+                throw new ArgumentNullException(nameof(ctr2));
+
+            if (ctr1.TurretId != ctr2.TurretId)
+                throw new InvalidOperationException($"Cannot add {nameof(CalibrationTestResult)}s with different {nameof(CalibrationTestResult.TurretId)}s!");
+
+            return new CalibrationTestResult() { 
+                TurretId = ctr1.TurretId,
+                Rotated = ctr1.Rotated + ctr2.Rotated, //TODO: Strictly speaking the turret needs to move from the RotationEndAngle back toRotationStartAngle before traversing again
+                TimesTested = ctr1.TimesTested + ctr2.TimesTested
+            };
+        }
     }
 
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 namespace Battleship.Api.Controllers
@@ -16,7 +17,7 @@ namespace Battleship.Api.Controllers
     /// Controller for the turret.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CalibrationController : ControllerBase
     {
 
@@ -68,15 +69,24 @@ namespace Battleship.Api.Controllers
         {
             _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(SaveCalibrationSettingsAsync)}=>");
 
+            bool result = default; // default==false
 
-            if (settings is null)
-                throw new ArgumentNullException(nameof(settings));
+            try
+            {
+                if (settings is null)
+                    throw new ArgumentNullException(nameof(settings));
 
 
-            var result = await _calibrationSvc.SaveCalibrationSettingsAsync(settings);
-
-
-            _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(SaveCalibrationSettingsAsync)}<=");
+                result = await _calibrationSvc.SaveCalibrationSettingsAsync(settings);
+            }
+            catch (Exception ex)
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+            finally
+            {
+                _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(SaveCalibrationSettingsAsync)}<=");
+            }
 
             return Ok(result);
         }
@@ -85,17 +95,26 @@ namespace Battleship.Api.Controllers
         /// Runs the configured calibration tests.
         /// </summary>
         /// <returns>IEnumerable of <see cref="CalibrationTestResult"/>s</returns>
-        [HttpPut("Run")]
+        [HttpPost("Run")]
         [Produces("application/json", Type = typeof(IEnumerable<CalibrationTestResult>))]
         public async Task<ActionResult<IEnumerable<CalibrationTestResult>>> RunCalibrationAsync()
         {
             _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(RunCalibrationAsync)}=>");
 
+            IEnumerable<CalibrationTestResult> result = default;
 
-            var result = await _calibrationSvc.RunCalibrationAsync();
-
-
-            _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(RunCalibrationAsync)}<=");
+            try
+            {
+                result = await _calibrationSvc.RunCalibrationAsync();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+            finally
+            {
+                _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(RunCalibrationAsync)}<=");
+            }
 
             return Ok(result);
         }
