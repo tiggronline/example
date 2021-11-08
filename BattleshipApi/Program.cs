@@ -56,7 +56,9 @@ namespace Battleship.Api
             string[] args
             )
             => Host
-                .CreateDefaultBuilder(args)
+                .CreateDefaultBuilder(
+                    args
+                    )
                 .ConfigureLogging(
                     logging => logging.ClearProviders()
                     )

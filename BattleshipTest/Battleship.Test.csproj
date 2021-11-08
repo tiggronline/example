@@ -24,8 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BattleshipApi\BattleshipApi.csproj" />
-    <ProjectReference Include="..\BattleshipModel\BattleshipModel.csproj" />
+    <ProjectReference Include="..\BattleshipApi\Battleship.Api.csproj" />
   </ItemGroup>
 
 </Project>

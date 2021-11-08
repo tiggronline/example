@@ -1,13 +1,18 @@
+using Battleship.Api.Repos;
+using Battleship.Api.Services;
+using Battleship.API.Infrastructure;
 using Battleship.Model.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NeoSmart.Caching.Sqlite;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Serilog;
 using System;
 using System.IO;
 
@@ -19,6 +24,12 @@ namespace Battleship.Api
     /// </summary>
     public class Startup
     {
+
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>IConfiguration</value>
+        private IConfiguration _configuration { get; }
 
 
         /// <summary>
@@ -32,12 +43,6 @@ namespace Battleship.Api
             _configuration = configuration;
         }
 
-
-        /// <summary>
-        /// Gets the configuration.
-        /// </summary>
-        /// <value>IConfiguration</value>
-        private IConfiguration _configuration { get; }
 
         /// <summary>
         /// Adds services to the container.
@@ -120,7 +125,10 @@ namespace Battleship.Api
 
 
             services
-                .AddSingleton<CacheRepository>()
+                .AddSingleton<CacheRepo>();
+
+            services
+                .AddScoped<CalibrationService>();
         }
 
         /// <summary>
@@ -128,29 +136,71 @@ namespace Battleship.Api
         /// </summary>
         /// <param name="app">IApplicationBuilder</param>
         /// <param name="env">IWebHostEnvironment</param>
+        /// <param name="logger">ILogger of <see cref="Startup"/></param>
         /// <remarks>Called by the runtime.</remarks>
         public void Configure(
             IApplicationBuilder app,
-            IWebHostEnvironment env
+            IWebHostEnvironment env,
+            ILogger<Startup> logger
             )
         {
+            if (app is null)
+                throw new ArgumentNullException(nameof(app));
+
+            if (env is null)
+                throw new ArgumentNullException(nameof(env));
+
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
+
+            // Show the console what is being logged
+            Program.WriteToDebugAndConsole($"Logging:");
+            Program.WriteToDebugAndConsole($"  Trace={logger.IsEnabled(LogLevel.Trace)}");
+            Program.WriteToDebugAndConsole($"  Debug={logger.IsEnabled(LogLevel.Debug)}");
+            Program.WriteToDebugAndConsole($"  Information={logger.IsEnabled(LogLevel.Information)}");
+            Program.WriteToDebugAndConsole($"  Warning={logger.IsEnabled(LogLevel.Warning)}");
+            Program.WriteToDebugAndConsole($"  Error={logger.IsEnabled(LogLevel.Error)}");
+            Program.WriteToDebugAndConsole($"  Critical={logger.IsEnabled(LogLevel.Critical)}");
+
+
+            // Use SeriLog for streamlined HTTP request logging.
+            // Must be called before handlers such as MVC (will not time or log components that appear before it in the pipeline).
+            Program.WriteToDebugAndConsole($"Configuring SerilogRequestLogging...");
+
+            app.UseSerilogRequestLogging();
+
+
             if (env.IsDevelopment())
             {
+                Program.WriteToDebugAndConsole($"Configuring Dev Environment (exceptions & Swagger)...");
+
                 app.UseDeveloperExceptionPage();
+
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BattleshipApi v1"));
+                app.UseSwaggerUI(
+                    c => c.SwaggerEndpoint(
+                            "/swagger/v1/swagger.json",
+                            $"{AppInfo.Product} v{AppInfo.Version.ToString(2)}"
+                            )
+                    );
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
+            // Handle requests matching MVC Endpoints
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+
+            //Use custom Exception Handler for structured ApiError responses
+            app.UseHttpInterceptorMiddleware();
 
         }
 

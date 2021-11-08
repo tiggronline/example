@@ -10,6 +10,13 @@ namespace Battleship.Model.Models
     {
 
         /// <summary>
+        /// Gets or sets the ID of the turret.
+        /// </summary>
+        /// <value>Integer between 102mm and 405mm</value>
+        public int Id { get; set; }
+
+
+        /// <summary>
         /// Gets or sets the caliber of the turret (in mm).
         /// </summary>
         /// <value>Integer between 102mm and 405mm</value>
