@@ -111,7 +111,6 @@ namespace Battleship.Api
                             }
                         }
                         );
-                    //options.UseInlineDefinitionsForEnums();
 
                     // Use the .Net generated code comments for annotations (location is set in the project Properties->Build)
                     var asmDocFile = $"{AppInfo.RootPath}\\{AppInfo.Name}.xml";
