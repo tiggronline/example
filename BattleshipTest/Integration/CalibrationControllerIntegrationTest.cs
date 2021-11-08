@@ -20,7 +20,7 @@ namespace BattleshipTest
         }
 
         [Fact]
-        public void Test1()
+        public void Get_Test()
         {
             var response = httpClient.GetAsync("api/calibration").GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
