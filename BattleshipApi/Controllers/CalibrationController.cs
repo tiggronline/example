@@ -1,9 +1,7 @@
 ﻿using Battleship.Api.Services;
-using Battleship.Model.Config;
 using Battleship.Model.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +15,7 @@ namespace Battleship.Api.Controllers
     /// Controller for the turret.
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class CalibrationController : ControllerBase
     {
 
@@ -59,7 +57,7 @@ namespace Battleship.Api.Controllers
         /// <summary>
         /// Saves the requested calibration settings.
         /// </summary>
-        /// <param name="settings" example="{'abc':'def'}"><see cref="CalibrationSettings"/></param>
+        /// <param name="settings"><see cref="CalibrationSettings"/></param>
         /// <returns>Boolean</returns>
         [HttpPut("Settings")]
         [Produces("application/json", Type = typeof(bool))]

@@ -13,7 +13,7 @@ namespace Battleship.Model.Models
         /// <summary>
         /// Gets or sets the IDs of turrets to test in order.
         /// </summary>
-        /// <value example='[1,3,2,3]'>IEnumerable of Integer turret IDs</value>
+        /// <value>IEnumerable of Integer turret IDs</value>
         [Required]
         public IEnumerable< int> Sequence { get; set; }
 

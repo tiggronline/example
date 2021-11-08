@@ -29,7 +29,7 @@ namespace Battleship.Api
         /// Gets the configuration.
         /// </summary>
         /// <value>IConfiguration</value>
-        private IConfiguration _configuration { get; }
+        private IConfiguration Configuration { get; }
 
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Battleship.Api
             IConfiguration configuration
             )
         {
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
 
@@ -62,7 +62,7 @@ namespace Battleship.Api
 
             services
                 .AddOptions<OptionsForTurrets>()
-                    .Bind(_configuration.GetSection(OptionsForTurrets.SectionPath))
+                    .Bind(Configuration.GetSection(OptionsForTurrets.SectionPath))
                         .ValidateDataAnnotations();
 
 
@@ -111,6 +111,7 @@ namespace Battleship.Api
                             }
                         }
                         );
+                    //options.UseInlineDefinitionsForEnums();
 
                     // Use the .Net generated code comments for annotations (location is set in the project Properties->Build)
                     var asmDocFile = $"{AppInfo.RootPath}\\{AppInfo.Name}.xml";

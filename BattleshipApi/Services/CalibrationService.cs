@@ -154,7 +154,7 @@ namespace Battleship.Api.Services
                 {
                     _logger.LogDebug($"Testing calibration for turret {turretId}...");
 
-                    var testResult = await DoTest( // TODO: Handle test failures and feed this back to the user
+                    var testResult = DoTest( // TODO: Handle test failures and feed this back to the user
                         turrets[turretId]
                         );
 
@@ -188,8 +188,8 @@ namespace Battleship.Api.Services
         /// </summary>
         /// <param name="turret"><see cref="Turret"/> to test</param>
         /// <returns><see cref="CalibrationTestResult"/></returns>
-        private async Task<CalibrationTestResult> DoTest(
-            [Required] Turret turret
+        private static CalibrationTestResult DoTest(
+            Turret turret
             )
         {
 
