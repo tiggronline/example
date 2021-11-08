@@ -15,7 +15,7 @@ namespace Battleship.Api.Controllers
     /// Controller for the turret.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CalibrationController : ControllerBase
     {
 
