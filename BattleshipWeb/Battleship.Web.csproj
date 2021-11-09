@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Authors>Andrew Davies</Authors>
     <Company>Andrew Davies</Company>
-    <StartupObject>Battleship.Web.Program</StartupObject>
+    <StartupObject></StartupObject>
     <Product>Battleship Turrent Calibration</Product>
     <Description>Battleship Turrent Calibration Web</Description>
     <Copyright>Copyright (c) 2021 Andrew Davies</Copyright>
