@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
@@ -188,7 +187,7 @@ namespace Battleship.Api.Services
         {
             _logger.LogTrace($"{nameof(CalibrationService)}.{nameof(GetCalibrationAsync)}=>");
 
-            CalibrationSettings  result = default;
+            CalibrationSettings result = default;
 
             try
             {

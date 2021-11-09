@@ -15,7 +15,7 @@ namespace Battleship.Model.Models
         /// </summary>
         /// <value>IEnumerable of Integer turret IDs</value>
         [Required]
-        public IEnumerable< int> Sequence { get; set; }
+        public IEnumerable<int> Sequence { get; set; }
 
         /// <summary>
         /// Gets or sets the turrets that can be tested.

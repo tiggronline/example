@@ -33,7 +33,7 @@ namespace Battleship.API.Extensions
                 return ex.InnerException.GetUsefulException();
 
             else if (
-                ex is HttpRequestException && 
+                ex is HttpRequestException &&
                 ex.Message.Equals("Internal Server Error", StringComparison.OrdinalIgnoreCase) &&
                 ex.InnerException is not null
                 )

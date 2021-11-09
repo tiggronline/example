@@ -4,6 +4,12 @@
 
 This is the INX Battleship test solution.
 
+To run the app you need to set the application startup to Multiple Projects (select the solution file, then select the menu
+ option `Project->Set Startup Projects`) and set both API and **Web** to Start.
+
+The **API** uses port **5000** (http)/ **5001** (https).  
+The **Web** uses port **5002**.
+
 
 # Battleship Calibration Challenge
 

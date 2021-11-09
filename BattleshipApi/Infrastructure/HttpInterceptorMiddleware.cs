@@ -132,7 +132,7 @@ namespace Battleship.API.Infrastructure
                     HttpStatusCode.NotFound => "Not found - the requested item may have been moved, renamed or deleted!",   // 404
                     HttpStatusCode.RequestTimeout => "The request was cancelled - please try again",                        // 408
                     HttpStatusCode.Locked =>                                                                                // 423
-                        usefulException.InnerException?.Message is null ? 
+                        usefulException.InnerException?.Message is null ?
                             $"Locked for use by someone else!" :
                             usefulException.InnerException?.Message, //Return actual error
                     HttpStatusCode.UnsupportedMediaType => $"Unsupported media type - {usefulException.Message}!",          // 415

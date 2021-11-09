@@ -35,7 +35,7 @@ namespace Battleship.Model.Models
         /// <param name="ctr2"><see cref="CalibrationTestResult"/></param>
         /// <returns><see cref="CalibrationTestResult"/></returns>
         public static CalibrationTestResult operator +(
-            CalibrationTestResult ctr1, 
+            CalibrationTestResult ctr1,
             CalibrationTestResult ctr2
             )
         {
@@ -48,7 +48,8 @@ namespace Battleship.Model.Models
             if (ctr1.TurretId != ctr2.TurretId)
                 throw new InvalidOperationException($"Cannot add {nameof(CalibrationTestResult)}s with different {nameof(CalibrationTestResult.TurretId)}s!");
 
-            return new CalibrationTestResult() { 
+            return new CalibrationTestResult()
+            {
                 TurretId = ctr1.TurretId,
                 Rotated = ctr1.Rotated + ctr2.Rotated, //TODO: Strictly speaking the turret needs to move from the RotationEndAngle back toRotationStartAngle before traversing again
                 TimesTested = ctr1.TimesTested + ctr2.TimesTested
