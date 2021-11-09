@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>Andrew Davies</Authors>
+    <Company>Andrew Davies</Company>
+    <StartupObject>Battleship.Web.Program</StartupObject>
+    <Product>Battleship Turrent Calibration</Product>
+    <Description>Battleship Turrent Calibration Web</Description>
+    <Copyright>Copyright (c) 2021 Andrew Davies</Copyright>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,6 +25,10 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BattleshipModel\Battleship.Model.csproj" />
   </ItemGroup>
 
 </Project>

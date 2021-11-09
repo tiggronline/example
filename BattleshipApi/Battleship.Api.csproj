@@ -4,15 +4,16 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Battleship.Api</RootNamespace>
     <AssemblyName>Api</AssemblyName>
-    <Product>Battleships</Product>
+    <Product>Battleship Turrent Calibration</Product>
     <Company>Andrew Davies</Company>
     <Authors>Andrew Davies</Authors>
-    <PackageId>Battleships API</PackageId>
-    <Description>Battleships test project</Description>
+    <PackageId>Battleship.API</PackageId>
+    <Description>Battleship Turrent Calibration API</Description>
     <Copyright>Copyright (c) 2021 Andrew Davies</Copyright>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <RepositoryType>Git</RepositoryType>
+    <StartupObject>Battleship.Api.Program</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
