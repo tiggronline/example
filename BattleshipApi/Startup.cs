@@ -26,21 +26,21 @@ namespace Battleship.Api
     {
 
         /// <summary>
-        /// Gets the configuration.
+        /// IConfiguration
         /// </summary>
-        /// <value>IConfiguration</value>
-        private IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
 
         /// <summary>
         /// Initialises this class.
         /// </summary>
-        /// <param name="configuration"></param>
+        /// <param name="configuration">IConfiguration</param>
         public Startup(
             IConfiguration configuration
             )
         {
-            Configuration = configuration;
+            _configuration = configuration ??
+                throw new ArgumentNullException(nameof(configuration));
         }
 
 
@@ -62,7 +62,7 @@ namespace Battleship.Api
 
             services
                 .AddOptions<OptionsForTurrets>()
-                    .Bind(Configuration.GetSection(OptionsForTurrets.SectionPath))
+                    .Bind(_configuration.GetSection(OptionsForTurrets.SectionPath))
                         .ValidateDataAnnotations();
 
 
@@ -126,6 +126,7 @@ namespace Battleship.Api
                 );
 
 
+            // Consifure dependency injection
             services
                 .AddSingleton<CacheRepo>();
 
@@ -175,10 +176,12 @@ namespace Battleship.Api
 
             if (env.IsDevelopment())
             {
-                Program.WriteToDebugAndConsole($"Configuring Dev Environment (exceptions & Swagger)...");
+                //Do NOT use the DEP because it interferes with the HttpInterceptorMiddleware
+                //app.UseDeveloperExceptionPage()
 
-                app //.UseDeveloperExceptionPage()
-                    .UseSwagger()
+                Program.WriteToDebugAndConsole($"Configuring Swagger...");
+
+                app.UseSwagger()
                     .UseSwaggerUI(
                         c => c.SwaggerEndpoint(
                                 "/swagger/v1/swagger.json",
