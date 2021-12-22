@@ -1,4 +1,5 @@
 ﻿using Battleship.Api.Services;
+using Battleship.Model;
 using Battleship.Model.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ namespace Battleship.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [ApiVersion("2.0")] // Need to specify this on EVERY class, parent & derived, to get picked up by the versioning
     public class CalibrationController : ControllerBase
     {
 
@@ -53,6 +55,34 @@ namespace Battleship.Api.Controllers
 
 
         #region ==================== PUBLIC MEMBERS ====================
+
+        /// <summary>
+        /// Gets the application information.
+        /// </summary>
+        /// <returns><see cref="CalibrationSettings"/></returns>
+        [HttpGet()]
+        [Produces("application/json", Type = typeof(AppInfo))]
+        public async Task<ActionResult<CalibrationSettings>> GetAppInfoAsync()
+        {
+            _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetAppInfoAsync)}=>");
+
+            AppInfo result = default;
+
+            try
+            {
+                result = await Task.FromResult(new AppInfo());
+            }
+            catch (Exception ex)
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+            finally
+            {
+                _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetAppInfoAsync)}<=");
+            }
+
+            return Ok(result);
+        }
 
         /// <summary>
         /// Saves the requested calibration settings.

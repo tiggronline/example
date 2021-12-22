@@ -1,9 +1,11 @@
 using Battleship.Api.Repos;
 using Battleship.Api.Services;
 using Battleship.API.Infrastructure;
+using Battleship.Model;
 using Battleship.Model.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +17,7 @@ using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Battleship.Api
 {
@@ -98,30 +101,51 @@ namespace Battleship.Api
 
             services.AddSwaggerGen(options =>
                 {
-                    options.SwaggerDoc(
-                        "v1", // MUST be v1
-                        new OpenApiInfo
-                        {
-                            Title = AppInfo.Product,
-                            Description = AppInfo.Description,
-                            Version = AppInfo.Version.ToString(fieldCount: 3),
-                            Contact = new OpenApiContact()
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+                    var serviceProvider = services.BuildServiceProvider(); //HACK: Use the IApiVersionDescriptionProvider configured in AddApiVersioning above
+                    var apiVersionProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
+#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+
+                    // Generate swagger documentation for every discovered API version
+                    foreach (var description in apiVersionProvider.ApiVersionDescriptions)
+                    {
+                        options.SwaggerDoc(
+                            description.ApiVersion.ToString(),
+                            new OpenApiInfo
                             {
-                                Name = AppInfo.CompanyName
+                                Version = description.ApiVersion.ToString(),
+                                Title = AppInfo.Product,
+                                Description = $"{AppInfo.Description} for version {description.ApiVersion}. {(description.IsDeprecated ? " (DEPRECATED)" : "")}",
+                                Contact = new OpenApiContact()
+                                {
+                                    Name = AppInfo.CompanyName,
+                                    Email = AppInfo.CompanyEmail,
+                                    Url = AppInfo.CompanyUri
+                                }
                             }
-                        }
-                        );
+                            );
+                    }
+
+                    // add a custom operation filter which sets default values
+                    options.OperationFilter<SwaggerDefaultValues>();
 
                     // Use the .Net generated code comments for annotations (location is set in the project Properties->Build)
                     var asmDocFile = $"{AppInfo.RootPath}\\{AppInfo.Name}.xml";
+
                     if (!File.Exists(asmDocFile))
                         asmDocFile = $"{AppInfo.Name}.xml";
 
+                    if (!File.Exists(asmDocFile))
+                        Program.WriteToDebugAndConsole($"WARNING: XML Documentation file '{asmDocFile}' not found for Swagger!");
+
                     if (File.Exists(asmDocFile))
+                    {
+                        Program.WriteToDebugAndConsole($"Using XML Documentation file '{asmDocFile}' for Swagger");
                         options.IncludeXmlComments(
                             asmDocFile,
                             includeControllerXmlComments: true
                             );
+                    }
                 }
                 );
 
@@ -140,11 +164,13 @@ namespace Battleship.Api
         /// <param name="app">IApplicationBuilder</param>
         /// <param name="env">IWebHostEnvironment</param>
         /// <param name="logger">ILogger of <see cref="Startup"/></param>
+        /// <param name="apiVersionProvider">IApiVersionDescriptionProvider</param>
         /// <remarks>Called by the runtime.</remarks>
         public void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env,
-            ILogger<Startup> logger
+            ILogger<Startup> logger,
+            IApiVersionDescriptionProvider apiVersionProvider
             )
         {
             if (app is null)
@@ -183,10 +209,17 @@ namespace Battleship.Api
 
                 app.UseSwagger()
                     .UseSwaggerUI(
-                        c => c.SwaggerEndpoint(
-                                "/swagger/v1/swagger.json",
-                                $"{AppInfo.Product} v{AppInfo.Version.ToString(2)}"
-                                )
+                        options =>
+                        {
+                            // Generate a swagger endpoint for every discovered API version order by latest first (so it appears first in the Swagger dropdown)
+                            foreach (var description in apiVersionProvider.ApiVersionDescriptions.OrderByDescending(d => d.ApiVersion))
+                            {
+                                options.SwaggerEndpoint(
+                                    $"/swagger/{description.GroupName}/swagger.json",
+                                    $"v{description.GroupName}{(description.IsDeprecated ? " (deprecated)" : "")}"
+                                    );
+                            }
+                        }
                         );
             }
 

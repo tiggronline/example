@@ -22,7 +22,7 @@ namespace Battleship.API.Infrastructure
     {
 
         /// <summary>
-        /// RequestDelegate
+        /// RequestDelegate to call after handle the request.
         /// </summary>
         private readonly RequestDelegate _nextDelegate;
 
@@ -60,14 +60,12 @@ namespace Battleship.API.Infrastructure
             HttpContext context
             )
         {
-            // This is the last bastion of defence so EVERYTHING inside the TryCatch!
-            try
+            try // This is the last bastion of defence so EVERYTHING inside the TryCatch!
             {
                 if (context is null)
                     throw new ArgumentNullException(nameof(context));
 
-                // Continue with Request pipeline
-                await _nextDelegate.Invoke(context);
+                await _nextDelegate.Invoke(context); // Continue with Request pipeline
             }
             catch (Exception ex)
             {
@@ -91,8 +89,7 @@ namespace Battleship.API.Infrastructure
             HttpContext context
             )
         {
-            // This is the last bastion of defence so EVERYTHING inside the TryCatch!
-            try
+            try // This is the last bastion of defence so EVERYTHING inside the TryCatch!
             {
                 if (exception is null)
                     exception = new Exception($"{nameof(exception)} cannot be null!", exception); // Do NOT use ArgumentNullException so that a 500 error is returned

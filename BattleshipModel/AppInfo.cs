@@ -2,19 +2,22 @@
 using System.IO;
 using System.Reflection;
 
-namespace Battleship.Model.Config
+namespace Battleship.Model
 {
 
     /// <summary>
-    /// Model UI application information (WebClient or API depending on which calls it).
+    /// Model UI application information (of the calling / entry Assembly).
     /// </summary>
-    public static class AppInfo
+    public class AppInfo
     {
 
+        /// <summary>
+        /// Initialises this class.
+        /// </summary>
         static AppInfo()
         {
             // Reflection is 'heavy' so pick up the assembly information just once
-            var asm = Assembly.GetEntryAssembly(); // This will pick up DMS.WebClient or DMS.API
+            var asm = Assembly.GetEntryAssembly(); // This will pick up DMS.WebClient or DMS.API or BMS or OutlookAddIn
 
             Name = asm.GetName().Name;
             Product = asm.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
@@ -28,39 +31,49 @@ namespace Battleship.Model.Config
 
 
         /// <summary>
-        /// Gets the name from the assembly.
+        /// Gets the name of the entry assembly.
         /// </summary>
         public static string Name { get; }
 
         /// <summary>
-        /// Gets the product name from the assembly.
+        /// Gets the product name from the entry assembly.
         /// </summary>
         public static string Product { get; }
 
         /// <summary>
-        /// Gets the product description from the assembly.
+        /// Gets the product description from the entry assembly.
         /// </summary>
         public static string Description { get; }
 
         /// <summary>
-        /// Gets the product name from the assembly.
+        /// Gets the version from the entry assembly.
         /// </summary>
         public static Version Version { get; }
 
         /// <summary>
-        /// Gets the company name from the assembly.
+        /// Gets the company name from the entry assembly.
         /// </summary>
         public static string CompanyName { get; }
 
         /// <summary>
-        /// Gets the copyright from the assembly.
+        /// Gets the copyright from the entry assembly.
         /// </summary>
         public static string Copyright { get; }
 
         /// <summary>
-        /// Gets the product authors from the assembly.
+        /// Gets the product authors from the entry assembly.
         /// </summary>
         public static string Authors { get; }
+
+        /// <summary>
+        /// Gets the company email.
+        /// </summary>
+        public static string CompanyEmail => "info@inxsoftware.com";
+
+        /// <summary>
+        /// Gets the company website.
+        /// </summary>
+        public static Uri CompanyUri => new("www.inxsoftware.com");
 
 
         /// <summary>
