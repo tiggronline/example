@@ -13,4 +13,8 @@
     <DocumentationFile>bin\Release\net5.0\Model.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
 </Project>
