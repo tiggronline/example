@@ -73,7 +73,7 @@ namespace Battleship.Model
         /// <summary>
         /// Gets the company website.
         /// </summary>
-        public static Uri CompanyUri => new("www.inxsoftware.com");
+        public static Uri CompanyUri => new("http://www.inxsoftware.com/");
 
 
         /// <summary>
