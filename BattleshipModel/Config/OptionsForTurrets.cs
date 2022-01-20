@@ -2,15 +2,15 @@
 {
 
     /// <summary>
-    /// Application settings.
+    /// Strongly-typed configuration options for turrets.
     /// </summary>
-    public class OptionsForTurrets
+    public class OptionsForTurrets:OptionsBase
     {
 
         /// <summary>
         /// The name of the main section in AppSettings.json.
         /// </summary>
-        public const string SectionPath = "Turrets";
+        public new const string SectionPath = "Turrets";
 
 
         /// <summary>
