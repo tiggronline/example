@@ -5,7 +5,10 @@ using Battleship.Model;
 using Battleship.Model.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -68,6 +71,11 @@ namespace Battleship.Api
                     .Bind(_configuration.GetSection(OptionsForTurrets.SectionPath))
                         .ValidateDataAnnotations();
 
+            services
+                .AddOptions<OptionsForJson>()
+                    .Bind(_configuration.GetSection(OptionsForJson.SectionPath))
+                        .ValidateDataAnnotations();
+
 
             services.AddSqliteCache(
                 options =>
@@ -83,26 +91,81 @@ namespace Battleship.Api
                 .AddNewtonsoftJson(
                     options =>
                     {
+                        // Settings for all serialized return values
+                        OptionsForJson jsonOptions = new();
+                        _configuration
+                            .GetSection(OptionsForJson.SectionPath)
+                                .Bind(jsonOptions);
+
                         options.SerializerSettings.ContractResolver = new DefaultContractResolver()
                         {
                             NamingStrategy = new CamelCaseNamingStrategy()
                         };
-                        options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                        options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                        options.SerializerSettings.TypeNameHandling = TypeNameHandling.None;
-#if DEBUG
-                        options.SerializerSettings.Formatting = Formatting.Indented;
-#else
-                        options.SerializerSettings.Formatting = Formatting.None;
-#endif
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                        options.SerializerSettings.CheckAdditionalContent = jsonOptions.Serializing.CheckAdditionalContent;
+                        options.SerializerSettings.ConstructorHandling = jsonOptions.Serializing.ConstructorHandling;
+                        options.SerializerSettings.DateFormatHandling = jsonOptions.Serializing.DateFormatHandling;
+                        options.SerializerSettings.DateTimeZoneHandling = jsonOptions.Serializing.DateTimeZoneHandling;
+                        options.SerializerSettings.DateFormatString = jsonOptions.Serializing.DateFormatString;
+                        options.SerializerSettings.DateParseHandling = jsonOptions.Serializing.DateParseHandling;
+                        options.SerializerSettings.DefaultValueHandling = jsonOptions.Serializing.DefaultValueHandling;
+                        options.SerializerSettings.Formatting = jsonOptions.Serializing.Formatting;
+                        options.SerializerSettings.FloatFormatHandling = jsonOptions.Serializing.FloatFormatHandling;
+                        options.SerializerSettings.FloatParseHandling = jsonOptions.Serializing.FloatParseHandling;
+                        options.SerializerSettings.MaxDepth = jsonOptions.Serializing.MaxDepth;
+                        options.SerializerSettings.MetadataPropertyHandling = jsonOptions.Serializing.MetadataPropertyHandling;
+                        options.SerializerSettings.MissingMemberHandling = jsonOptions.Serializing.MissingMemberHandling;
+                        options.SerializerSettings.NullValueHandling = jsonOptions.Serializing.NullValueHandling;
+                        options.SerializerSettings.ObjectCreationHandling = jsonOptions.Serializing.ObjectCreationHandling;
+                        options.SerializerSettings.PreserveReferencesHandling = jsonOptions.Serializing.PreserveReferencesHandling;
+                        options.SerializerSettings.ReferenceLoopHandling = jsonOptions.Serializing.ReferenceLoopHandling;
+                        options.SerializerSettings.StringEscapeHandling = jsonOptions.Serializing.StringEscapeHandling;
+                        options.SerializerSettings.TypeNameAssemblyFormatHandling = jsonOptions.Serializing.TypeNameAssemblyFormatHandling;
+                        options.SerializerSettings.TypeNameHandling = jsonOptions.Serializing.TypeNameHandling;
+                        if (jsonOptions.Serializing.SerializeEnumsAsStrings)
+                            options.SerializerSettings.Converters.Add(
+                                new Newtonsoft.Json.Converters.StringEnumConverter()
+                                );
+                    }
+                        );
+
+            services
+                .AddApiVersioning(
+                   options =>
+                   {
+                       // Provide api-supported_versions and api-deprecated-versions in the response headers
+                       options.ReportApiVersions = true; 
+
+                       // Default to the latest version
+                       //options.DefaultApiVersion = new ApiVersion(2, 0); 
+                       //options.AssumeDefaultVersionWhenUnspecified = true;
+
+                       // Use a header value to allow callers to target a specific API version in the header other than the default set above
+                       options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+                   }
+                    )
+                .AddVersionedApiExplorer( // Add a version-aware explorer
+                    options =>
+                    {
+                        //options.GroupNameFormat = "'v'VVV"; // Format the version as "'v'major[.minor][-status]"
+                        //options.SubstituteApiVersionInUrl = true; // Subsitute the version when using url segments (the SubstitutionFormat can also be used to control the format of the API version in route templates)
                     }
                     );
 
             services.AddSwaggerGen(options =>
                 {
+                    //HACK: Map the IFormCollection in Swagger to a normal file upload so Swagger will show a file upload button (Angular Flow uploads multiple form parts including the normal upload)
+                    options.MapType(
+                        typeof(IFormCollection),
+                        () => new OpenApiSchema()
+                        {
+                            Type = "file",
+                            Format = "binary"
+                        }
+                        );
+
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-                    var serviceProvider = services.BuildServiceProvider(); //HACK: Use the IApiVersionDescriptionProvider configured in AddApiVersioning above
+                    //HACK: Use the IApiVersionDescriptionProvider configured in AddApiVersioning above
+                    var serviceProvider = services.BuildServiceProvider(); 
                     var apiVersionProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
