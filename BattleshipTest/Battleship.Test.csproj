@@ -9,7 +9,7 @@
 
     <AssemblyName>Test</AssemblyName>
 
-    <StartupObject>Battleship.Api.Program</StartupObject>
+    <StartupObject></StartupObject>
 
     <Product>Battleship Turrent Calibration</Product>
 
@@ -26,6 +26,10 @@
     <AssemblyVersion>1.0.0</AssemblyVersion>
 
     <FileVersion>1.0.0</FileVersion>
+
+    <ApplicationIcon />
+
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
