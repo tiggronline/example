@@ -1,4 +1,3 @@
-using Battleship.Api.Repos;
 using Xunit;
 
 namespace BattleshipTest

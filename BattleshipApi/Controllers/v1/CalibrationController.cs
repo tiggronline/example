@@ -3,8 +3,6 @@ using Battleship.Model.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 

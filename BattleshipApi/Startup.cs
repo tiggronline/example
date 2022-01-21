@@ -6,7 +6,6 @@ using Battleship.Model.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NeoSmart.Caching.Sqlite;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
@@ -133,7 +131,7 @@ namespace Battleship.Api
                    options =>
                    {
                        // Provide api-supported_versions and api-deprecated-versions in the response headers
-                       options.ReportApiVersions = true; 
+                       options.ReportApiVersions = true;
 
                        // Default to the latest version
                        //options.DefaultApiVersion = new ApiVersion(2, 0); 
@@ -165,7 +163,7 @@ namespace Battleship.Api
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
                     //HACK: Use the IApiVersionDescriptionProvider configured in AddApiVersioning above
-                    var serviceProvider = services.BuildServiceProvider(); 
+                    var serviceProvider = services.BuildServiceProvider();
                     var apiVersionProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 

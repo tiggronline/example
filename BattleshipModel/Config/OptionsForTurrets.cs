@@ -4,7 +4,7 @@
     /// <summary>
     /// Strongly-typed configuration options for turrets.
     /// </summary>
-    public class OptionsForTurrets:OptionsBase
+    public class OptionsForTurrets : OptionsBase
     {
 
         /// <summary>
