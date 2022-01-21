@@ -57,7 +57,7 @@ namespace Battleship.Api.Controllers
         #region ==================== PUBLIC MEMBERS ====================
 
         /// <summary>
-        /// Gets the application information.
+        /// Gets the application information asynchronously.
         /// </summary>
         /// <returns><see cref="CalibrationSettings"/></returns>
         [HttpGet()]
@@ -85,7 +85,7 @@ namespace Battleship.Api.Controllers
         }
 
         /// <summary>
-        /// Saves the requested calibration settings.
+        /// Saves the requested calibration settings asynchronously.
         /// </summary>
         /// <param name="settings"><see cref="CalibrationSettings"/></param>
         /// <returns>Boolean</returns>
@@ -120,9 +120,12 @@ namespace Battleship.Api.Controllers
         }
 
         /// <summary>
-        /// Runs the configured calibration tests.
+        /// Runs the configured calibration tests asynchronously.
         /// </summary>
         /// <returns>IEnumerable of <see cref="CalibrationTestResult"/>s</returns>
+        /// <example>
+        ///     http://localhost/api/calibration/run
+        /// </example>
         [HttpPost("Run")]
         [Produces("application/json", Type = typeof(IEnumerable<CalibrationTestResult>))]
         public async Task<ActionResult<IEnumerable<CalibrationTestResult>>> RunCalibrationAsync()
@@ -148,7 +151,7 @@ namespace Battleship.Api.Controllers
         }
 
         /// <summary>
-        /// Gets the configured calibration tests.
+        /// Gets the configured calibration tests asynchronously.
         /// </summary>
         /// <returns><see cref="CalibrationSettings"/></returns>
         [HttpGet()]
