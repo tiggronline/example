@@ -85,6 +85,34 @@ namespace Battleship.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the configured calibration tests asynchronously.
+        /// </summary>
+        /// <returns><see cref="CalibrationSettings"/></returns>
+        [HttpGet("Settings")]
+        [Produces("application/json", Type = typeof(IEnumerable<CalibrationTestResult>))]
+        public async Task<ActionResult<CalibrationSettings>> GetCalibrationSettingsAsync()
+        {
+            _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetCalibrationSettingsAsync)}=>");
+
+            CalibrationSettings result = default;
+
+            try
+            {
+                result = await _calibrationSvc.GetCalibrationAsync();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+            finally
+            {
+                _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetCalibrationSettingsAsync)}<=");
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Saves the requested calibration settings asynchronously.
         /// </summary>
         /// <param name="settings"><see cref="CalibrationSettings"/></param>
@@ -145,34 +173,6 @@ namespace Battleship.Api.Controllers
             finally
             {
                 _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(RunCalibrationAsync)}<=");
-            }
-
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// Gets the configured calibration tests asynchronously.
-        /// </summary>
-        /// <returns><see cref="CalibrationSettings"/></returns>
-        [HttpGet()]
-        [Produces("application/json", Type = typeof(IEnumerable<CalibrationTestResult>))]
-        public async Task<ActionResult<CalibrationSettings>> GetCalibrationAsync()
-        {
-            _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetCalibrationAsync)}=>");
-
-            CalibrationSettings result = default;
-
-            try
-            {
-                result = await _calibrationSvc.GetCalibrationAsync();
-            }
-            catch (Exception ex)
-            {
-                ExceptionDispatchInfo.Capture(ex).Throw();
-            }
-            finally
-            {
-                _logger.LogTrace($"{nameof(CalibrationController)}.{nameof(GetCalibrationAsync)}<=");
             }
 
             return Ok(result);
