@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # Ignore Sqlite files
 *.db
+*.db-shm
+*.db-wal

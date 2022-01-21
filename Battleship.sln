@@ -11,12 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Test", "Battlesh
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A58534D-7306-4875-8D77-C068054B8C2B}"
 	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{A1F2E0B6-EEB0-4691-98A1-19AE98E7A4DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Battleship.Web", "BattleshipWeb\Battleship.Web.csproj", "{BBA89FC6-F15D-499C-9242-70C9B104D48B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Web", "BattleshipWeb\Battleship.Web.csproj", "{BBA89FC6-F15D-499C-9242-70C9B104D48B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
