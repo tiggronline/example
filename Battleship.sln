@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Api", "Battleshi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Model", "BattleshipModel\Battleship.Model.csproj", "{0F7B1200-91DD-4E6D-98CC-8CBFA9BF5884}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Test", "BattleshipTest\Battleship.Test.csproj", "{00C31362-1B5B-4A23-8464-E1DD97788455}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A58534D-7306-4875-8D77-C068054B8C2B}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -19,6 +17,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{A1F2E0B6-EEB0-4691-98A1-19AE98E7A4DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Web", "BattleshipWeb\Battleship.Web.csproj", "{BBA89FC6-F15D-499C-9242-70C9B104D48B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Battleship.Api.Test", "BattleshipApiTest\Battleship.Api.Test.csproj", "{79044C43-1559-468C-B752-BCB093FB0B9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,19 +34,20 @@ Global
 		{0F7B1200-91DD-4E6D-98CC-8CBFA9BF5884}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F7B1200-91DD-4E6D-98CC-8CBFA9BF5884}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F7B1200-91DD-4E6D-98CC-8CBFA9BF5884}.Release|Any CPU.Build.0 = Release|Any CPU
-		{00C31362-1B5B-4A23-8464-E1DD97788455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00C31362-1B5B-4A23-8464-E1DD97788455}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00C31362-1B5B-4A23-8464-E1DD97788455}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBA89FC6-F15D-499C-9242-70C9B104D48B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BBA89FC6-F15D-499C-9242-70C9B104D48B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA89FC6-F15D-499C-9242-70C9B104D48B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBA89FC6-F15D-499C-9242-70C9B104D48B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79044C43-1559-468C-B752-BCB093FB0B9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79044C43-1559-468C-B752-BCB093FB0B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79044C43-1559-468C-B752-BCB093FB0B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79044C43-1559-468C-B752-BCB093FB0B9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{00C31362-1B5B-4A23-8464-E1DD97788455} = {A1F2E0B6-EEB0-4691-98A1-19AE98E7A4DA}
+		{79044C43-1559-468C-B752-BCB093FB0B9A} = {A1F2E0B6-EEB0-4691-98A1-19AE98E7A4DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {17C2295F-435B-4A90-A37F-B4D10263A867}

@@ -48,10 +48,13 @@ namespace Battleship.Web
                 throw new ArgumentNullException(nameof(services));
 
 
-            Program.WriteToDebugAndConsole($"Configuring services...");
+            Program.WriteToDebugAndConsole("Configuring services...");
 
+
+            Program.WriteToDebugAndConsole(" Configuring Razor...");
 
             services.AddRazorPages();
+
         }
 
         /// <summary>
@@ -78,7 +81,7 @@ namespace Battleship.Web
 
 
             // Show the console what is being logged
-            Program.WriteToDebugAndConsole($"Logging:");
+            Program.WriteToDebugAndConsole($" {logger.GetType().Name}:");
             Program.WriteToDebugAndConsole($"  Trace={logger.IsEnabled(LogLevel.Trace)}");
             Program.WriteToDebugAndConsole($"  Debug={logger.IsEnabled(LogLevel.Debug)}");
             Program.WriteToDebugAndConsole($"  Information={logger.IsEnabled(LogLevel.Information)}");
@@ -89,12 +92,12 @@ namespace Battleship.Web
 
             // Use SeriLog for streamlined HTTP request logging.
             // Must be called before handlers such as MVC (will not time or log components that appear before it in the pipeline).
-            Program.WriteToDebugAndConsole($"Configuring SerilogRequestLogging...");
+            logger.LogInformation("Configuring SerilogRequestLogging...");
 
             app.UseSerilogRequestLogging(); //Start the logging before anything else so as much as possible gts logged
 
 
-            Program.WriteToDebugAndConsole($"Configuring error handling...");
+            logger.LogInformation(" Configuring error handling...");
 
             if (env.IsDevelopment())
             {
@@ -107,7 +110,7 @@ namespace Battleship.Web
             }
 
 
-            Program.WriteToDebugAndConsole($"Configuring pipeline...");
+            logger.LogInformation(" Configuring pipeline...");
 
             app.UseHttpsRedirection()
                 .UseStaticFiles()

@@ -6,6 +6,7 @@ using Battleship.Model.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +53,7 @@ namespace Battleship.Api
         /// Adds services to the container.
         /// </summary>
         /// <param name="services"></param>
-        /// <remarks>Called by the runtime.</remarks>
+        /// <remarks>Called by the runtime</remarks>
         public void ConfigureServices(
             IServiceCollection services
             )
@@ -61,8 +62,10 @@ namespace Battleship.Api
                 throw new ArgumentNullException(nameof(services));
 
 
-            Program.WriteToDebugAndConsole($"Configuring services...");
+            Program.WriteToDebugAndConsole("Configuring services...");
 
+
+            Program.WriteToDebugAndConsole(" Configuring settings...");
 
             services
                 .AddOptions<OptionsForTurrets>()
@@ -75,6 +78,8 @@ namespace Battleship.Api
                         .ValidateDataAnnotations();
 
 
+            Program.WriteToDebugAndConsole(" Configuring caching...");
+
             services.AddSqliteCache(
                 options =>
                 {
@@ -83,6 +88,8 @@ namespace Battleship.Api
                 }
                 );
 
+
+            Program.WriteToDebugAndConsole(" Configuring controllers...");
 
             services
                 .AddControllers()
@@ -126,6 +133,9 @@ namespace Battleship.Api
                     }
                         );
 
+
+            Program.WriteToDebugAndConsole(" Configuring API versioning...");
+
             services
                 .AddApiVersioning(
                    options =>
@@ -134,8 +144,8 @@ namespace Battleship.Api
                        options.ReportApiVersions = true;
 
                        // Default to the latest version
-                       //options.DefaultApiVersion = new ApiVersion(2, 0); 
-                       //options.AssumeDefaultVersionWhenUnspecified = true;
+                       options.DefaultApiVersion = new ApiVersion(2, 0);
+                       options.AssumeDefaultVersionWhenUnspecified = true;
 
                        // Use a header value to allow callers to target a specific API version in the header other than the default set above
                        options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
@@ -149,26 +159,15 @@ namespace Battleship.Api
                     }
                     );
 
-            services.AddSwaggerGen(options =>
+
+            Program.WriteToDebugAndConsole(" Configuring Swagger...");
+
+            services
+                .AddOptions<Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions>()
+                .Configure<IApiVersionDescriptionProvider>((options, provider) =>
                 {
-                    //HACK: Map the IFormCollection in Swagger to a normal file upload so Swagger will show a file upload button (Angular Flow uploads multiple form parts including the normal upload)
-                    options.MapType(
-                        typeof(IFormCollection),
-                        () => new OpenApiSchema()
-                        {
-                            Type = "file",
-                            Format = "binary"
-                        }
-                        );
-
-#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-                    //HACK: Use the IApiVersionDescriptionProvider configured in AddApiVersioning above
-                    var serviceProvider = services.BuildServiceProvider();
-                    var apiVersionProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
-#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-
                     // Generate swagger documentation for every discovered API version
-                    foreach (var description in apiVersionProvider.ApiVersionDescriptions)
+                    foreach (var description in provider.ApiVersionDescriptions)
                     {
                         options.SwaggerDoc(
                             description.ApiVersion.ToString(),
@@ -186,9 +185,23 @@ namespace Battleship.Api
                             }
                             );
                     }
+                });
 
-                    // add a custom operation filter which sets default values
+            services.AddSwaggerGen(options =>
+                {
+                    //HACK: Map the IFormCollection in Swagger to a normal file upload so Swagger will show a file upload button (Angular Flow uploads multiple form parts including the normal upload)
+                    options.MapType(
+                        typeof(IFormCollection),
+                        () => new OpenApiSchema()
+                        {
+                            Type = "file",
+                            Format = "binary"
+                        }
+                        );
+
+                    // Add a custom operation filter which sets default values
                     options.OperationFilter<SwaggerDefaultValues>();
+
 
                     // Use the .Net generated code comments for annotations (location is set in the project Properties->Build)
                     var asmDocFile = $"{AppInfo.RootPath}\\{AppInfo.Name}.xml";
@@ -199,9 +212,10 @@ namespace Battleship.Api
                     if (!File.Exists(asmDocFile))
                         Program.WriteToDebugAndConsole($"WARNING: XML Documentation file '{asmDocFile}' not found for Swagger!");
 
-                    if (File.Exists(asmDocFile))
+                    else
                     {
                         Program.WriteToDebugAndConsole($"Using XML Documentation file '{asmDocFile}' for Swagger");
+
                         options.IncludeXmlComments(
                             asmDocFile,
                             includeControllerXmlComments: true
@@ -211,12 +225,14 @@ namespace Battleship.Api
                 );
 
 
-            // Consifure dependency injection
+            Program.WriteToDebugAndConsole(" Configuring DI...");
+
             services
                 .AddSingleton<CacheRepo>();
 
             services
                 .AddScoped<CalibrationService>();
+
         }
 
         /// <summary>
@@ -224,14 +240,14 @@ namespace Battleship.Api
         /// </summary>
         /// <param name="app">IApplicationBuilder</param>
         /// <param name="env">IWebHostEnvironment</param>
-        /// <param name="logger">ILogger of <see cref="Startup"/></param>
-        /// <param name="apiVersionProvider">IApiVersionDescriptionProvider</param>
-        /// <remarks>Called by the runtime.</remarks>
+        /// <param name="apiProv">IApiVersionDescriptionProvider</param>
+        /// <param name="logger">ILogger of <see cref="Startup"/> to test the logging configuration</param>
+        /// <remarks>Called by the runtime</remarks>
         public void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env,
-            ILogger<Startup> logger,
-            IApiVersionDescriptionProvider apiVersionProvider
+            IApiVersionDescriptionProvider apiProv,
+            ILogger<Startup> logger
             )
         {
             if (app is null)
@@ -240,12 +256,17 @@ namespace Battleship.Api
             if (env is null)
                 throw new ArgumentNullException(nameof(env));
 
+            if (apiProv is null)
+                throw new ArgumentNullException(nameof(apiProv));
+
             if (logger is null)
                 throw new ArgumentNullException(nameof(logger));
 
 
-            // Show the console what is being logged
-            Program.WriteToDebugAndConsole($"Logging:");
+            Program.WriteToDebugAndConsole(" Configuring HTTP request pipeline...");
+
+
+            Program.WriteToDebugAndConsole($" {logger.GetType().Name}:");
             Program.WriteToDebugAndConsole($"  Trace={logger.IsEnabled(LogLevel.Trace)}");
             Program.WriteToDebugAndConsole($"  Debug={logger.IsEnabled(LogLevel.Debug)}");
             Program.WriteToDebugAndConsole($"  Information={logger.IsEnabled(LogLevel.Information)}");
@@ -256,7 +277,7 @@ namespace Battleship.Api
 
             // Use SeriLog for streamlined HTTP request logging.
             // Must be called before handlers such as MVC (will not time or log components that appear before it in the pipeline).
-            Program.WriteToDebugAndConsole($"Configuring SerilogRequestLogging...");
+            logger.LogInformation(" Configuring Serilog request logging...");
 
             app.UseSerilogRequestLogging(); //Start the logging before anything else so as much as possible gts logged
 
@@ -266,14 +287,14 @@ namespace Battleship.Api
                 //Do NOT use the DEP because it interferes with the HttpInterceptorMiddleware
                 //app.UseDeveloperExceptionPage()
 
-                Program.WriteToDebugAndConsole($"Configuring Swagger...");
+                logger.LogInformation(" Configuring Swagger...");
 
                 app.UseSwagger()
                     .UseSwaggerUI(
                         options =>
                         {
                             // Generate a swagger endpoint for every discovered API version order by latest first (so it appears first in the Swagger dropdown)
-                            foreach (var description in apiVersionProvider.ApiVersionDescriptions.OrderByDescending(d => d.ApiVersion))
+                            foreach (var description in apiProv.ApiVersionDescriptions.OrderByDescending(d => d.ApiVersion))
                             {
                                 options.SwaggerEndpoint(
                                     $"/swagger/{description.GroupName}/swagger.json",
@@ -286,18 +307,18 @@ namespace Battleship.Api
 
 
             //Use custom Exception Handler for structured error responses
-            Program.WriteToDebugAndConsole($"Configuring error handling...");
+            logger.LogInformation(" Configuring error handling...");
 
             app.UseHttpInterceptorMiddleware();
 
 
-            Program.WriteToDebugAndConsole($"Configuring pipeline...");
+            logger.LogInformation(" Configuring pipeline...");
 
             app.UseHttpsRedirection()
                 .UseRouting()
-                .UseEndpoints(endpoints =>
-                    endpoints.MapControllers() // Handle requests matching MVC Endpoints
-                );
+                .UseEndpoints(
+                    endpoints => endpoints.MapControllers() // Handle requests matching MVC Endpoints
+                    );
 
         }
 

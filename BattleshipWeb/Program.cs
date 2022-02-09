@@ -94,7 +94,7 @@ namespace Battleship.Web
         {
             // Make the message as similar to our logging template as possible
             var formattedMessage = (args.Length == 0) ? message : string.Format(message, args);
-            var fullMessage = $"{DateTime.Now:HH:mm:ss} INF {formattedMessage}";
+            var fullMessage = $"{DateTime.Now:HH:mm:ss} XXX {formattedMessage}";
 
             Debug.WriteLine(fullMessage);
             Console.WriteLine(fullMessage);
